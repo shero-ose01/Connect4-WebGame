@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Room } from '../../core/room';
 
@@ -11,7 +11,6 @@ import { Room } from '../../core/room';
 export class Home {
   private roomService = inject(Room);
   private router = inject(Router);
-  roomLink = signal<string | null>(null);
 
   createRoom() {
     this.roomService.createRoom().subscribe(roomId => {

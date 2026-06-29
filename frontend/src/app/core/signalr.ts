@@ -26,6 +26,12 @@ export class GameService {
     return room.currentTurn === player;
   });
 
+  shareUrl = computed(() => {
+    const room = this.room();
+    if (!room) return null;
+    return location.origin + "/game/" + room.id;
+  });
+
   async connect() {
     this.connection = new signalR.HubConnectionBuilder().withUrl('/gameHub').build();
 
@@ -45,8 +51,19 @@ export class GameService {
       this.room.set(room);
     });
 
+    this.connection.on('PlayerLeft', (room: GameRoom) => {
+      this.room.set(room);
+    });
+
     await this.connection.start();
     this.connectionId.set(this.connection.connectionId);
+  }
+  async disconnect() {
+    await this.connection?.stop();
+    this.connection = null;
+    this.room.set(null);
+    this.error.set(null);
+    this.connectionId.set(null);
   }
 
   async joinRoom(roomId: string) {

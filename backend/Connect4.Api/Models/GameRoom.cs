@@ -17,6 +17,12 @@ public class GameRoom
     public int CurrentTurn { get; set; } = 1;
     public int[][] Board { get; set; } = Enumerable.Range(0, 6).Select(_ => new int[7]).ToArray();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    
+    public void Reset(){
+        Board = Enumerable.Range(0,6).Select(_ => new int[7]).ToArray();
+        CurrentTurn = 1;
+        Winner = null;
+    }
 
     public static bool CheckWin(int[][] board, int row, int col, int player)
     {

@@ -2,6 +2,10 @@
 <p>Error: {{ error() }}</p>
 }
 
+@if (room() &&  (!room()!.player1Id || !room()!.player2Id)) {
+  <p>Waiting for opponent — share: {{ shareUrl() }}</p>
+}
+
 @if (room(); as r) {
   <p>Room: {{ r.id }}</p>
   <p>State: {{ r.state }}</p>

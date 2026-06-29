@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GameService } from '../../core/signalr';
 
@@ -8,7 +8,7 @@ import { GameService } from '../../core/signalr';
   templateUrl: './game.html',
   styleUrl: './game.scss',
 })
-export class Game implements OnInit {
+export class Game implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private gameService = inject(GameService);
 
@@ -16,6 +16,7 @@ export class Game implements OnInit {
   error = this.gameService.error;
   playerNumber = this.gameService.playerNumber;
   isMyTurn = this.gameService.isMyTurn;
+  shareUrl = this.gameService.shareUrl;
   private roomId!: string;
 
   async ngOnInit() {
@@ -25,6 +26,10 @@ export class Game implements OnInit {
 
     await this.gameService.connect();
     await this.gameService.joinRoom(this.roomId);
+  }
+
+  async ngOnDestroy() {
+    await this.gameService.disconnect();
   }
 
   dropPiece(column: number) {

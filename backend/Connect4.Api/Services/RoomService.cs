@@ -18,4 +18,7 @@ public class RoomService()
         _rooms.TryGetValue(id, out var room);
         return room;
     }
+    public GameRoom? GetRoomByConnection(string connectionId){
+        return _rooms.Values.FirstOrDefault(r => r.Player1Id == connectionId || r.Player2Id == connectionId);
+    }
 }

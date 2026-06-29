@@ -137,11 +137,24 @@ public class GameHub : Hub
             return;
         }
 
-        room.Board = Enumerable.Range(0, 6).Select(_ => new int[7]).ToArray();
-        room.CurrentTurn = 1;
-        room.Winner = null;
+        room.Reset();
         room.State = GameState.Active;
 
         await Clients.Group(roomId.ToString()).SendAsync("GameRestarted", room);
+    }
+
+
+    public override async Task OnDisconnectedAsync(Exception? exception){
+        var room = _roomService.GetRoomByConnection(Context.ConnectionId);
+        if(room is not null){
+          if(room.Player1Id == Context.ConnectionId) room.Player1Id = null;
+          else if(room.Player2Id == Context.ConnectionId) room.Player2Id = null;
+
+          room.Reset();
+          room.State = GameState.Waiting;
+          await Clients.Group(room.Id.ToString()).SendAsync("PlayerLeft", room);
+        }
+
+        await base.OnDisconnectedAsync(exception);
     }
 }
