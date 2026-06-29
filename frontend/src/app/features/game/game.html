@@ -1,0 +1,37 @@
+@if (error()) {
+<p>Error: {{ error() }}</p>
+}
+
+@if (room(); as r) {
+  <p>Room: {{ r.id }}</p>
+  <p>State: {{ r.state }}</p>
+
+  @if (playerNumber()) {
+    <p>You are Player {{ playerNumber() }}</p>
+  }
+
+  @if (r.state === 1) {
+    <p>{{ isMyTurn() ? 'Your turn' : "Opponent's turn" }}</p>
+  }
+
+  @if (r.state == 2){
+    @if (r.winner){
+      <h2>Player {{r.winner}} wins</h2>
+    } @else {
+      <h2>Draw</h2>
+    }
+    <button (click)="restart()">Play Again</button>
+  }
+  <div class="board" [class.disabled]="!isMyTurn()">
+    @for (row of r.board; track $index) {
+      <div class="row">
+        @for (cell of row; track $index; let j = $index) {
+          <div class="cell"
+              (click)="dropPiece(j)"
+              [class.p1]="cell === 1"
+              [class.p2]="cell === 2"></div>
+        }
+      </div>
+    }
+  </div>
+}

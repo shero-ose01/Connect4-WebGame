@@ -1,0 +1,34 @@
+.board {
+  display: inline-block;
+  background: var(--color-board);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  background: var(--color-cell-empty);
+  border-radius: 50%;
+  margin: 4px;
+  transition: background 0.2s;
+
+  &.p1 {
+    background: var(--color-player1);
+  }
+
+  &.p2 {
+    background: var(--color-player2);
+  }
+}
+
+.board {
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
