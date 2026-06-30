@@ -1,0 +1,18 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: self-hosted
+    steps:
+      - name: Pull latest code
+        run: git -C /home/shero/Projects/Connect4-WebGame pull origin main
+
+      - name: Rebuild and restart containers
+        run: docker compose -f /home/shero/Projects/Connect4-WebGame/docker-compose.yml up -d --build
