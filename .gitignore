@@ -1,5 +1,0 @@
-# Demo recording artifacts (raw video + helper script)
-# Note: docs/screenshots/*.png and *.gif are intentionally tracked for the README.
-docs/screenshots/*.mp4
-docs/screenshots/*.webm
-scripts/record-demo.sh
