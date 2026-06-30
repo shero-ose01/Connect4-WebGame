@@ -8,3 +8,18 @@
   flex: 1;
   display: flex;
 }
+
+.site-footer {
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--fg-2);
+
+  a {
+    color: var(--fg-2);
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: var(--color-accent);
+  }
+}

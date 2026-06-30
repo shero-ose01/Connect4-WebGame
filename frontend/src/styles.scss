@@ -23,7 +23,7 @@
   --color-text: var(--fg-1);
   --color-accent: var(--orange-bright);
   --color-player1: var(--orange-bright);
-  --color-player2: var(--yellow-bright);
+  --color-player2: var(--blue-bright);
   --color-board: var(--bg-3);
   --color-cell-empty: var(--bg-1);
 }
@@ -32,4 +32,26 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: system-ui, sans-serif;
+  margin: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: 0.05rem;
+  color: var(--color-accent);
+}
+
+.btn {
+  padding: 0.75rem 1.75rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--color-accent);
+  color: var(--bg-0);
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--orange-dim);
 }

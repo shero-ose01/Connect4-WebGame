@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, computed } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GameService } from '../../core/signalr';
 
@@ -17,6 +17,13 @@ export class Game implements OnInit, OnDestroy {
   playerNumber = this.gameService.playerNumber;
   isMyTurn = this.gameService.isMyTurn;
   shareUrl = this.gameService.shareUrl;
+
+  columns = computed(() => {
+    const board = this.room()?.board;
+    if (!board) return [];
+    return board[0].map((_, col) => board.map(row => row[col]));
+  });
+
   private roomId!: string;
 
   async ngOnInit() {
@@ -38,5 +45,9 @@ export class Game implements OnInit, OnDestroy {
 
   restart() {
     this.gameService.restartGame(this.roomId);
+  }
+
+  copyLink() {
+    navigator.clipboard.writeText(this.shareUrl() ?? '');
   }
 }

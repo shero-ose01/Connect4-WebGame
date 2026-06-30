@@ -7,10 +7,12 @@ namespace Connect4.Api.Hubs;
 public class GameHub : Hub
 {
     private readonly RoomService _roomService;
+    private readonly GameEngine _gameEngine;
 
-    public GameHub(RoomService roomService)
+    public GameHub(RoomService roomService, GameEngine gameEngine)
     {
         _roomService = roomService;
+        _gameEngine = gameEngine;
     }
 
     public async Task JoinRoom(Guid roomId)
@@ -23,19 +25,17 @@ public class GameHub : Hub
             return;
         }
 
-        if (room.Player1Id is null)
-        {
-            room.Player1Id = Context.ConnectionId;
-        }
-        else if (room.Player2Id is null)
-        {
-            room.Player2Id = Context.ConnectionId;
-            room.State = GameState.Active;
-        }
-        else
-        {
-            await Clients.Caller.SendAsync("Error", "Room is full");
-            return;
+        JoinResult res = _gameEngine.Join(room, Context.ConnectionId);
+
+        if(!res.Success){
+            var msg = res.Error switch
+            {
+                JoinError.RoomFull => "Room is full",
+                _ => "Error"
+            };
+
+            await Clients.Caller.SendAsync("Error", msg);
+          return;
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
@@ -52,12 +52,6 @@ public class GameHub : Hub
             return;
         }
 
-        if (room.State != GameState.Active)
-        {
-            await Clients.Caller.SendAsync("Error", "Game not active");
-            return;
-        }
-
         int playerNumber;
         if (Context.ConnectionId == room.Player1Id) playerNumber = 1;
         else if (Context.ConnectionId == room.Player2Id) playerNumber = 2;
@@ -67,49 +61,19 @@ public class GameHub : Hub
             return;
         }
 
-        if (room.CurrentTurn != playerNumber)
-        {
-            await Clients.Caller.SendAsync("Error", "Not your turn");
-            return;
-        }
+        MoveResult res = _gameEngine.MakeMove(room, playerNumber, column);
 
-        if (column < 0 || column >= 7)
-        {
-            await Clients.Caller.SendAsync("Error", "Invalid column");
-            return;
-        }
-
-        int targetRow = -1;
-
-        for (int i = 5; i >= 0; i--)
-        {
-            if (room.Board[i][column] == 0)
+        if (!res.Success){
+            var msg = res.Error switch
             {
-                targetRow = i;
-                break;
-            }
-        }
-
-        if (targetRow == -1)
-        {
-            await Clients.Caller.SendAsync("Error", "Column is full");
+                MoveError.GameNotActive => "Game is not Active",
+                MoveError.NotYourTurn => "Its not your turn",
+                MoveError.InvalidColumn => "Invalid column",
+                MoveError.ColumnFull => "Column is full",
+                _ => "Error"
+            };
+            await Clients.Caller.SendAsync("Error", msg);
             return;
-        }
-
-        room.Board[targetRow][column] = playerNumber;
-
-        if (GameRoom.CheckWin(room.Board, targetRow, column, playerNumber))
-        {
-            room.State = GameState.Finished;
-            room.Winner = playerNumber;
-        }
-        else if (GameRoom.IsBoardFull(room.Board))
-        {
-            room.State = GameState.Finished; // this is a draw, no winner
-        }
-        else
-        {
-            room.CurrentTurn = playerNumber == 1 ? 2 : 1;
         }
 
         await Clients.Group(roomId.ToString()).SendAsync("MoveMade", room);
@@ -125,20 +89,18 @@ public class GameHub : Hub
             return;
         }
 
-        if (Context.ConnectionId != room.Player1Id && Context.ConnectionId != room.Player2Id)
-        {
-            await Clients.Caller.SendAsync("Error", "You are not a Player in this room");
+        RestartResult res = _gameEngine.Restart(room, Context.ConnectionId);
+        if(!res.Success){
+            var msg = res.Error switch
+            {
+                RestartError.GameNotFinished => "Game is not finished",
+                RestartError.NotAPlayer => "You are not a player in this room",
+                _ => "Error"
+            };
+
+            await Clients.Caller.SendAsync("Error",msg);
             return;
         }
-
-        if (room.State != GameState.Finished)
-        {
-            await Clients.Caller.SendAsync("Error", "Game is still running");
-            return;
-        }
-
-        room.Reset();
-        room.State = GameState.Active;
 
         await Clients.Group(roomId.ToString()).SendAsync("GameRestarted", room);
     }

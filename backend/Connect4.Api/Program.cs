@@ -3,16 +3,11 @@ using Connect4.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
 builder.Services.AddSingleton<RoomService>();
+builder.Services.AddSingleton<GameEngine>();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 app.MapPost("/api/rooms", (RoomService roomService) =>
 {
