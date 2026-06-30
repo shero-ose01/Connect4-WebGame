@@ -6,4 +6,8 @@ ASP.NET for the backend, this time minimal Api, and Angular for the frontend. Th
 
 ## Screenshots
 
--- Still need to take them
+![Connect 4 home screen](docs/screenshots/home.png)
+
+### Gameplay
+
+![Connect 4 gameplay](docs/screenshots/demo.gif)
