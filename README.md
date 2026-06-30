@@ -5,10 +5,10 @@ A simple Multiplayer Connect 4.
 Create a game/room, send the invite link to another person and you can play together.
 
 ## Stack
-Backend: ASP.NET minimal Api, Websockets/SignalR hub
-Frontend: Angular
-Hosting: Docker compose, nginx, Cloudflare Tunnel hosted under <a href="http://connect4.s-ose.de">connect4.s-ose.de</a>
-CI/CD: Github actions, xUnit + Vitest on every push, deploy via self-hosted runner
+Backend: ASP.NET minimal Api, Websockets/SignalR hub <br>
+Frontend: Angular <br>
+Hosting: Docker compose, nginx, Cloudflare Tunnel hosted under <a href="http://connect4.s-ose.de">connect4.s-ose.de</a> <br>
+CI/CD: Github actions, xUnit + Vitest on every push, deploy via self-hosted runner <br>
 
 ## Screenshots
 
